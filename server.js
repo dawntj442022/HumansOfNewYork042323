@@ -1,3 +1,5 @@
+require("dotenv").config();
+require("./backend/db");
 const express = require("express");
 const path = require("path");
 const favicon = require("serve-favicon");
@@ -12,6 +14,12 @@ app.use(express.json());
 // to serve from the production 'build' folder
 app.use(favicon(path.join(__dirname, "build", "favicon.ico")));
 app.use(express.static(path.join(__dirname, "build")));
+
+//connect to database
+const db = require("./backend/db");
+db.once("open", () => {
+  console.log("connected to mongo");
+});
 
 // Put API routes here, before the "catch all" route
 
