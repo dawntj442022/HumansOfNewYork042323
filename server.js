@@ -18,9 +18,6 @@ app.use(cors(corsOptions));
 app.use(logger("dev"));
 app.use(express.json());
 
-// API routes
-app.use(require("./backend/checkToken"));
-
 // Configure both serve-favicon & static middleware
 // to serve from the production 'build' folder
 app.use(favicon(path.join(__dirname, "build", "favicon.ico")));
@@ -40,17 +37,12 @@ app.use((req, res, next) => {
 });
 
 // API routes
-app.use(require("./backend/checkToken"));
-
 app.use(
-  "/api/blogController",
-  require("./backend/controllers/api/blogController")
+  "/api/blogsController",
+  require("./backend/controllers/api/blogsController")
 );
 
-app.use(
-  "/api/userController",
-  require("./backend/controllers/api/userController")
-);
+app.use("/api/users", require("./backend/controllers/api/users"));
 
 // The following "catch all" route (note the *) is necessary
 // to return the index.html on all non-AJAX requests
