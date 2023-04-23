@@ -4,11 +4,22 @@ const express = require("express");
 const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
+const cors = require("cors");
 
 const app = express();
 
+var corsOptions = {
+  origin: "http://localhost:3000",
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
 app.use(logger("dev"));
 app.use(express.json());
+
+// API routes
+app.use(require("./backend/checkToken"));
 
 // Configure both serve-favicon & static middleware
 // to serve from the production 'build' folder
@@ -23,9 +34,23 @@ db.once("open", () => {
 
 // Put API routes here, before the "catch all" route
 
-app.get("/api", (req, res) => {
-  res.json({ message: "The API is alive!!!" });
+app.use((req, res, next) => {
+  res.locals.data = {};
+  next();
 });
+
+// API routes
+app.use(require("./backend/checkToken"));
+
+app.use(
+  "/api/blogController",
+  require("./backend/controllers/api/blogController")
+);
+
+app.use(
+  "/api/userController",
+  require("./backend/controllers/api/userController")
+);
 
 // The following "catch all" route (note the *) is necessary
 // to return the index.html on all non-AJAX requests
