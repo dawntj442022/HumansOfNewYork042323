@@ -48,7 +48,6 @@ router.post("/login", dataController.login);
 router.get("/checkToken", checkToken, apiController.auth);
 
 module.exports = router;
-
 /** Helper function */
 
 function createJWT(user) {

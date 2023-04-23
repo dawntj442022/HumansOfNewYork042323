@@ -37,12 +37,22 @@ app.use((req, res, next) => {
 });
 
 // API routes
+
+app.use("/api/blogs", require("./backend/routes/api/blogs"));
+
+app.use("/api/users", require("./backend/routes/api/users"));
+
+app.use("/api/auth", require("./backend/routes/auth"));
+
 app.use(
   "/api/blogsController",
   require("./backend/controllers/api/blogsController")
 );
 
-app.use("/api/users", require("./backend/controllers/api/users"));
+app.use(
+  "/api/usersControllers",
+  require("./backend/controllers/api/usersController")
+);
 
 // The following "catch all" route (note the *) is necessary
 // to return the index.html on all non-AJAX requests
