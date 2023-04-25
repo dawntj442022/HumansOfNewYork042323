@@ -1,28 +1,24 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { useAuthContext } from "../contexts/authContext";
 
-function LoginForm() {
-  const history = useHistory();
+function MyForm({ onSubmit, buttonLabel }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { login } = useAuthContext();
-
-  const onSubmit = async (data) => {
-    try {
-      await login(data);
-      history.push("/blogs");
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <div>
+        <label htmlFor="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          {...register("name", { required: true })}
+        />
+        {errors.name && <p>Name is required</p>}
+      </div>
       <div>
         <label htmlFor="email">Email</label>
         <input
@@ -41,9 +37,9 @@ function LoginForm() {
         />
         {errors.password && <p>Password is required</p>}
       </div>
-      <button type="submit">Log In</button>
+      <button type="submit">{buttonLabel}</button>
     </form>
   );
 }
 
-export default LoginForm;
+export default MyForm;

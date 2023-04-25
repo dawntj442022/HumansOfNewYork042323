@@ -5,6 +5,7 @@ const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
 const cors = require("cors");
+// const axios = require("axios");
 
 const app = express();
 
@@ -44,15 +45,42 @@ app.use("/api/users", require("./backend/routes/api/users"));
 
 app.use("/api/auth", require("./backend/routes/auth"));
 
-app.use(
-  "/api/blogsController",
-  require("./backend/controllers/api/blogsController")
-);
+// app.use(
+//   "/api/blogsController",
+//   require("./backend/controllers/api/blogsController")
+// );
 
-app.use(
-  "/api/usersControllers",
-  require("./backend/controllers/api/usersController")
-);
+// app.use(
+//   "/api/usersControllers",
+//   require("./backend/controllers/api/usersController")
+// );
+
+// app.post("/api/blogs", async (req, res) => {
+//   const { title, content, imageUrl, videoUrl } = req.body;
+//   try {
+//     const response = await axios.post(
+//       "http://jsonplaceholder.typicode.com/posts",
+//       {
+//         title,
+//         body: content,
+//         userId: 1,
+//       }
+//     );
+//     const newBlog = {
+//       _id: response.data.id,
+//       title,
+//       content,
+//       imageUrl,
+//       videoUrl,
+//       user: { _id: 1, name: "John Doe" },
+//       likes: 0,
+//     };
+//     res.status(201).json(newBlog);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Failed to create blog" });
+//   }
+// });
 
 // The following "catch all" route (note the *) is necessary
 // to return the index.html on all non-AJAX requests
