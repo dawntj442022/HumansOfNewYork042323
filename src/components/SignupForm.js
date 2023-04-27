@@ -1,58 +1,57 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { useAuthContext } from "../contexts/authContext";
+import React, { useState } from "react";
 
-function SignupForm() {
-  const history = useHistory();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const { signup } = useAuthContext();
+const SignupForm = ({ handleSignup }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-  const onSubmit = async (data) => {
-    try {
-      await signup(data);
-      history.push("/blogs");
-    } catch (error) {
-      console.log(error);
-    }
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleSignup(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit}>
+      <h2>Sign Up</h2>
       <div>
-        <label htmlFor="name">Name</label>
+        <label htmlFor="name">Name:</label>
         <input
           type="text"
           id="name"
-          {...register("name", { required: true })}
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
         />
-        {errors.name && <p>Name is required</p>}
       </div>
       <div>
-        <label htmlFor="email">Email</label>
+        <label htmlFor="email">Email:</label>
         <input
           type="email"
           id="email"
-          {...register("email", { required: true })}
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
         />
-        {errors.email && <p>Email is required</p>}
       </div>
       <div>
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">Password:</label>
         <input
           type="password"
           id="password"
-          {...register("password", { required: true })}
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
         />
-        {errors.password && <p>Password is required</p>}
       </div>
       <button type="submit">Sign Up</button>
     </form>
   );
-}
+};
 
 export default SignupForm;

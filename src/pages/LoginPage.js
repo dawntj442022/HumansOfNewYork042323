@@ -1,51 +1,72 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useAuthContext } from "../contexts/authContext";
+import { useUserStore } from "../store";
 
-function LoginPage() {
+const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useHistory();
-  const { login } = useAuthContext();
+  const setUser = useUserStore((state) => state.setUser);
+  const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await login(email, password);
-      navigate("/");
-    } catch (error) {
-      setError(error.response.data);
+    console.log("Login form data:", { email, password });
+    const res = await fetch("/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setUser(data.user);
+      localStorage.setItem("token", data.token);
+      history.push("/user");
+    } else {
+      alert("Invalid email or password. Please try again.");
     }
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <div className="container">
+      <h1 className="text-center mt-5">Log In</h1>
+
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email</label>
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">
+            Email address
+          </label>
           <input
             type="email"
+            className="form-control"
             id="email"
+            aria-describedby="emailHelp"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-        <div>
-          <label htmlFor="password">Password</label>
+        <div className="mb-3">
+          <label htmlFor="password" className="form-label">
+            Password
+          </label>
           <input
             type="password"
+            className="form-control"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        {error && <p>{error}</p>}
-        <button type="submit">Login</button>
+        <button type="submit" className="btn btn-primary">
+          Log In
+        </button>
       </form>
     </div>
   );
-}
+};
 
 export default LoginPage;
