@@ -4,10 +4,41 @@ const blogPostsController = require("../../controllers/api/blogPostsController")
 const ensureLoggedIn = require("../../config/ensureLoggedIn");
 const checkToken = require("../../config/checkToken");
 
-router.get("/", blogPostsController.getAll);
-router.get("/:id", blogPostsController.getOne);
-router.post("/", checkToken, ensureLoggedIn, blogPostsController.create);
-router.put("/:id", checkToken, ensureLoggedIn, blogPostsController.update);
-router.delete("/:id", checkToken, ensureLoggedIn, blogPostsController.delete);
+// Route to get all blog posts
+router.get("/", function (req, res) {
+  blogPostsController.find(req, res);
+});
+
+// Route to get one blog post by ID
+router.get("/:id", function (req, res) {
+  blogPostsController.getOne(req, res);
+});
+
+// Route to create a new blog post
+router.post("/", function (req, res) {
+  checkToken(req, res, function () {
+    ensureLoggedIn(req, res, function () {
+      blogPostsController.create(req, res);
+    });
+  });
+});
+
+// Route to update an existing blog post by ID
+router.put("/:id", function (req, res) {
+  checkToken(req, res, function () {
+    ensureLoggedIn(req, res, function () {
+      blogPostsController.update(req, res);
+    });
+  });
+});
+
+// Route to delete a blog post by ID
+router.delete("/:id", function (req, res) {
+  checkToken(req, res, function () {
+    ensureLoggedIn(req, res, function () {
+      blogPostsController.delete(req, res);
+    });
+  });
+});
 
 module.exports = router;

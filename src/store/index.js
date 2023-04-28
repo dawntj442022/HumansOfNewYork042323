@@ -1,7 +1,23 @@
 import { create } from "zustand";
 
-export const useUserStore = create((set) => ({
+const useUserStore = create((set) => ({
   user: null,
   setUser: (user) => set(() => ({ user })),
   logout: () => set(() => ({ user: null })),
+  getUserData: async (token) => {
+    const res = await fetch("/api/users/me", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    } else {
+      throw new Error("Failed to get user data from server");
+    }
+  },
 }));
+
+export { useUserStore };

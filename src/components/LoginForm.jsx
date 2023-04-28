@@ -1,6 +1,6 @@
-import { useUserStore } from "../store/user";
+import { useUserStore } from "../store";
 import React, { useState } from "react";
-import { useHistory } from "react";
+import { useHistory } from "react-router-dom";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -19,12 +19,16 @@ function LoginForm() {
         },
         body: JSON.stringify({ email, password }),
       });
+      if (res.status === 401) {
+        throw new Error("Invalid email or password");
+      }
       const data = await res.json();
       localStorage.setItem("token", data.token);
       setUser(data.user);
-      history.push("/user");
+      history.push(`/users/${data.user._id}`);
     } catch (err) {
       console.error(err);
+      alert(err.message);
     }
   };
 
@@ -34,7 +38,7 @@ function LoginForm() {
       <label htmlFor="email">Email</label>
       <input
         type="email"
-        id="email"
+        // id="email"
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -42,7 +46,7 @@ function LoginForm() {
       <label htmlFor="password">Password</label>
       <input
         type="password"
-        id="password"
+        // id="password"
         required
         value={password}
         onChange={(e) => setPassword(e.target.value)}

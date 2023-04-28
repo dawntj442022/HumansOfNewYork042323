@@ -1,76 +1,88 @@
-const BlogPost = require("../../models/blogPost");
+const express = require("express");
+const router = express.Router();
+const blogPostsController = require("../../controllers/api/blogPostsController");
 
-module.exports = {
-  async getAll(req, res) {
-    try {
-      const blogPosts = await BlogPost.find().populate("author", "name");
-      res.json(blogPosts);
-    } catch (error) {
-      res.status(500).json({ message: "Error retrieving blog posts." });
-    }
-  },
+// Read all
+router.get("/", async (req, res) => {
+  try {
+    const blogPosts = await blogPostsController.find();
+    res.json(blogPosts);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 
-  async getOne(req, res) {
-    try {
-      const blogPost = await BlogPost.findById(req.params.id).populate(
-        "author",
-        "name"
-      );
-      if (!blogPost) {
-        res.status(404).json({ message: "Blog post not found." });
-      } else {
-        res.json(blogPost);
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Error retrieving blog post." });
-    }
-  },
+// Read one
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
 
-  async create(req, res) {
-    try {
-      const newPost = new BlogPost({ ...req.body, author: req.user._id });
-      const savedPost = await newPost.save();
-      res.status(201).json(savedPost);
-    } catch (error) {
-      res.status(500).json({ message: "Error creating blog post." });
-    }
-  },
+  try {
+    const query = await blogPostsController.findOne(id);
+    return res.json(query);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 
-  async update(req, res) {
-    try {
-      const updatedPost = await BlogPost.findOneAndUpdate(
-        { _id: req.params.id, author: req.user._id },
-        req.body,
-        { new: true, runValidators: true }
-      );
-      if (!updatedPost) {
-        res
-          .status(404)
-          .json({ message: "Blog post not found or not authorized." });
-      } else {
-        res.json(updatedPost);
-      }
-    } catch (error) {
-      res.status(500).json({ message: "Error updating blog post." });
-    }
-  },
+// Create
+router.post("/", async (req, res) => {
+  try {
+    const { body } = req;
+    const createdBlogPost = await blogPostsController.create({ ...body });
+    return res.json(createdBlogPost);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 
-  async delete(req, res) {
-    try {
-      const deletedPost = await BlogPost.findOneAndDelete({
-        _id: req.params.id,
-        author: req.user._id,
-      });
-      if (!deletedPost) {
-        res
-          .status(404)
-          .json({ message: "Blog post not found or not authorized." });
-      } else {
-        res.json({ message: "Blog post deleted.", _id: deletedPost._id });
-      }
-    } catch (error) {
-      res.status(500).json({ message: "Error deleting blog post." });
-    }
-  },
-};
+// Update
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log("Received PUT request for BlogPost with ID", id);
+  try {
+    const updatedBlogPost = await blogPostsController.update(id, req.body);
+    console.log("Successfully updated BlogPost with ID", id);
+    return res.json(updatedBlogPost);
+  } catch (error) {
+    console.log("Error updating BlogPost with ID", id, ":", error);
+    res.status(500).json({ error });
+  }
+});
+
+// Delete
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    const deletedBlogPost = await blogPostsController.delete(id);
+    return res.json(deletedBlogPost);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+module.exports = router;
+
+//   async like(req, res) {
+//     try {
+//       const blogPost = await BlogPost.findById(req.params.id);
+//       if (!blogPost) {
+//         res.status(404).json({ message: "Blog post not found." });
+//       } else {
+//         const { isLiked } = blogPost.likes.find(
+//           (like) => like.user.toString() === req.user._id.toString()
+//         ) || { isLiked: false };
+//         blogPost.likes = blogPost.likes.filter(
+//           (like) => like.user.toString() !== req.user._id.toString()
+//         );
+//         if (!isLiked) {
+//           blogPost.likes.push({ user: ObjectID(req.user._id), isLiked: true });
+//         }
+//         const savedPost = await blogPost.save();
+//         res.json(savedPost);
+//       }
+//     } catch (error) {
+//       res.status(500).json({ message: "Error liking blog post." });
+//     }
+//   },
+// };

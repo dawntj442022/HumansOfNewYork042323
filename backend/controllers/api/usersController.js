@@ -80,7 +80,16 @@ const apiController = {
 
 function createJWT(user) {
   try {
-    const token = jwt.sign({ user }, process.env.SECRET, { expiresIn: "24h" });
+    const token = jwt.sign(
+      {
+        email: user.email,
+        userId: user._id,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
     return token;
   } catch (error) {
     console.log(error);

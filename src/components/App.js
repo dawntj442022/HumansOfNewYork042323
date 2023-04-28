@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Switch, Route, useHistory } from "react-router-dom";
-import { useStore } from "../store";
-import { getUserData } from "../store/user";
+import { useUserStore } from "../store";
+import { getUserData } from "../store/users";
 import HomePage from "../pages/Home";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
@@ -11,15 +11,19 @@ import Footer from "./Footer";
 
 function App() {
   const history = useHistory();
-  const user = useStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
-      getUserData(token).catch((error) => {
-        console.error("Error getting user data:", error);
-        localStorage.removeItem("token");
-      });
+      getUserData(token)
+        .then((data) => {
+          console.log("User data received from server:", data);
+        })
+        .catch((error) => {
+          console.error("Error getting user data:", error);
+          localStorage.removeItem("token");
+        });
     } else {
       history.push("/login");
     }
@@ -27,7 +31,7 @@ function App() {
 
   return (
     <>
-      <Navigation />
+      <Navigation user={user} />
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route path="/login" component={LoginPage} />

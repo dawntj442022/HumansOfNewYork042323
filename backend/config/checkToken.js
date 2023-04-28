@@ -1,19 +1,22 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = function (req, res, next) {
-  // Check for the token being sent in a header or a query parameter
-  let token = req.get("Authorization") || req.query.token;
-  if (token) {
-    token = token.replace("Bearer ", "");
-    // Check if token is valid and not expired
-    jwt.verify(token, process.env.SECRET, function (err, decoded) {
-      req.user = err ? null : decoded.user;
-      req.exp = err ? null : new Date(decoded.exp * 1000);
-    });
-    return next();
-  } else {
-    // No token was sent
-    req.user = null;
-    return next();
+  let token =
+    req.headers["authorization"] || req.headers["Authorization"] || "";
+  if (token.startsWith("Bearer ")) {
+    token = token.slice(7, token.length);
   }
+  console.log("Token value:", token); // Add this line to log the token value
+  jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
+    if (err) {
+      return res.status(401).json({
+        message: "Unauthorized",
+        error: err,
+      });
+    } else {
+      console.log("Decoded userId:", decoded.userId); // add this line to log the decoded userId
+      req.userId = decoded.userId;
+      next();
+    }
+  });
 };
