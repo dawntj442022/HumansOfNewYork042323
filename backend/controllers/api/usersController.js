@@ -9,10 +9,13 @@ const checkToken = (req, res) => {
 
 const dataController = {
   async findAll(req, res, next) {
-    const allUser = await User.find({});
-    res.status(200).json(allUser);
+    try {
+      const allUsers = await User.find({});
+      res.status(200).json(allUsers);
+    } catch (error) {
+      res.status(400).json(error);
+    }
   },
-
   async createUser(req, res, next) {
     try {
       console.log("Create user request received with data:", req.body);
@@ -28,13 +31,11 @@ const dataController = {
       res.status(400).json(error);
     }
   },
-
   async create(req, res, next) {
     try {
       const user = await User.create(req.body);
       const token = createJWT(user);
 
-      console.log("User created:", user);
       res.locals.data.user = user;
       res.locals.data.token = token;
       next();
@@ -42,6 +43,7 @@ const dataController = {
       res.status(400).json(error);
     }
   },
+
   async login(req, res, next) {
     try {
       const { email, password } = req.body;

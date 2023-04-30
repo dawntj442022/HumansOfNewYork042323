@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const SALT_ROUNDS = 10;
+const SALT_ROUNDS = 6;
 
 const userSchema = new Schema(
   {
@@ -18,10 +18,6 @@ const userSchema = new Schema(
       trim: true,
       minLength: 3,
       required: true,
-    },
-    isAdmin: {
-      type: Boolean,
-      default: false,
     },
   },
   {

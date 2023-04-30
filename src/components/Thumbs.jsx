@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Thumbs = ({ postId, handleLike, handleDislike }) => {
+const Thumbs = ({ postId, likes, dislikes, handleLike, handleDislike }) => {
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
@@ -27,13 +27,13 @@ const Thumbs = ({ postId, handleLike, handleDislike }) => {
           👍
         </span>
       </button>
-      <span>{/* display number of likes */}</span>
+      <span>{likes}</span>
       <button onClick={handleDislikeClick}>
         <span role="img" aria-label="thumbs-down">
           👎
         </span>
       </button>
-      <span>{/* display number of dislikes */}</span>
+      <span>{dislikes}</span>
     </div>
   );
 };

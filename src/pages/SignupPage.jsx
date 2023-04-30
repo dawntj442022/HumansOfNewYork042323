@@ -14,6 +14,7 @@ const SignupPage = () => {
     const res = await fetch("/api/users/signup", {
       method: "POST",
       headers: {
+        Accept: "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

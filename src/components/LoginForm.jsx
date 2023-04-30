@@ -15,20 +15,24 @@ function LoginForm() {
       const res = await fetch("/api/users/login", {
         method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
+
       if (res.status === 401) {
         throw new Error("Invalid email or password");
       }
+
       const data = await res.json();
+      console.log(data);
       localStorage.setItem("token", data.token);
       setUser(data.user);
       history.push(`/users/${data.user._id}`);
-    } catch (err) {
-      console.error(err);
-      alert(err.message);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
     }
   };
 
@@ -38,7 +42,7 @@ function LoginForm() {
       <label htmlFor="email">Email</label>
       <input
         type="email"
-        // id="email"
+        id="email"
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -46,7 +50,7 @@ function LoginForm() {
       <label htmlFor="password">Password</label>
       <input
         type="password"
-        // id="password"
+        id="password"
         required
         value={password}
         onChange={(e) => setPassword(e.target.value)}

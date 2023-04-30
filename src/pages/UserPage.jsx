@@ -43,6 +43,7 @@ const UserPage = () => {
     const res = await fetch("/api/posts", {
       method: "POST",
       headers: {
+        Accept: "application/json",
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

@@ -3,6 +3,8 @@ import { create } from "zustand";
 const useUserStore = create((set) => ({
   user: null,
   setUser: (user) => set(() => ({ user })),
+  posts: [],
+  setPosts: (posts) => set((state) => ({ ...state, posts })),
   logout: () => set(() => ({ user: null })),
   getUserData: async (token) => {
     const res = await fetch("/api/users/me", {

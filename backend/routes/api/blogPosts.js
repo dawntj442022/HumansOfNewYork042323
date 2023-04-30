@@ -6,7 +6,7 @@ const checkToken = require("../../config/checkToken");
 
 // Route to get all blog posts
 router.get("/", function (req, res) {
-  blogPostsController.find(req, res);
+  blogPostsController.getAll(req, res);
 });
 
 // Route to get one blog post by ID

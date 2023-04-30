@@ -1,65 +1,79 @@
 const express = require("express");
 const router = express.Router();
-const blogPostsController = require("../../controllers/api/blogPostsController");
 
-// Read all
-router.get("/", async (req, res) => {
+const BlogPost = require("../../models/blogPost");
+
+const getAll = async (req, res) => {
   try {
-    const blogPosts = await blogPostsController.find();
-    res.json(blogPosts);
+    const blogPosts = await BlogPost.find({});
+    res.status(200).json(blogPosts);
   } catch (error) {
     res.status(500).json({ error });
   }
-});
+};
 
-// Read one
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-
+const getOne = async (req, res) => {
   try {
-    const query = await blogPostsController.findOne(id);
-    return res.json(query);
+    const { id } = req.params;
+    const blogPost = await BlogPost.findOne({ _id: id });
+    if (!blogPost) {
+      res.status(404).json({ message: "Blog post not found" });
+    } else {
+      res.status(200).json(blogPost);
+    }
   } catch (error) {
     res.status(500).json({ error });
   }
-});
+};
 
-// Create
-router.post("/", async (req, res) => {
+const create = async (req, res) => {
   try {
     const { body } = req;
-    const createdBlogPost = await blogPostsController.create({ ...body });
-    return res.json(createdBlogPost);
+    const blogPost = await BlogPost.create({ ...body });
+    res.status(201).json(blogPost);
   } catch (error) {
     res.status(500).json({ error });
   }
-});
+};
 
-// Update
-router.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  console.log("Received PUT request for BlogPost with ID", id);
+const update = async (req, res) => {
   try {
-    const updatedBlogPost = await blogPostsController.update(id, req.body);
-    console.log("Successfully updated BlogPost with ID", id);
-    return res.json(updatedBlogPost);
+    const { id } = req.params;
+    const { body } = req;
+    const updatedBlogPost = await BlogPost.findByIdAndUpdate(id, body, {
+      new: true,
+    });
+    if (!updatedBlogPost) {
+      res.status(404).json({ message: "Blog post not found" });
+    } else {
+      res.status(200).json(updatedBlogPost);
+    }
   } catch (error) {
-    console.log("Error updating BlogPost with ID", id, ":", error);
     res.status(500).json({ error });
   }
-});
+};
 
-// Delete
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  console.log(id);
+const remove = async (req, res) => {
   try {
-    const deletedBlogPost = await blogPostsController.delete(id);
-    return res.json(deletedBlogPost);
+    const { id } = req.params;
+    const deletedBlogPost = await BlogPost.findByIdAndDelete(id);
+    if (!deletedBlogPost) {
+      res.status(404).json({ message: "Blog post not found" });
+    } else {
+      res.status(200).json(deletedBlogPost);
+    }
   } catch (error) {
     res.status(500).json({ error });
   }
-});
+};
+
+module.exports = {
+  getAll,
+  getOne,
+  create,
+  update,
+  remove,
+};
 
 module.exports = router;
 
@@ -86,3 +100,6 @@ module.exports = router;
 //     }
 //   },
 // };
+// const blogPostsController = require("../../controllers/api/blogPostsController");
+// const ensureLoggedIn = require("../../config/ensureLoggedIn");
+// const checkToken = require("../../config/checkToken");

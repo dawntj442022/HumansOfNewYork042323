@@ -5,18 +5,19 @@ const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const usersRoutes = require("./backend/routes/api/users");
 const blogPostsRoutes = require("./backend/routes/api/blogPosts"); // Import the blogPosts routes
 
 const app = express();
 
 var corsOptions = {
-  origin: ["http://localhost:3002", "http://localhost:3003"],
+  origin: ["http://localhost:3002"],
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-
+app.use(bodyParser.json());
 app.use(logger("dev"));
 app.use(express.json());
 
@@ -34,6 +35,12 @@ app.use((req, res, next) => {
 
 app.use("/api/users", usersRoutes);
 app.use("/api/blogPosts", blogPostsRoutes); // Add this line to use the blogPosts routes
+
+// Route that returns JSON data
+app.get("/data", (req, res) => {
+  const data = { message: "Hello, world!" };
+  res.json(data);
+});
 
 // "catch all" route
 app.get("/*", function (req, res) {
