@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const BlogPost = require("../backend/models/blogPost");
+const BlogPost = require("../../models/blogPost");
 
 const getAll = async (req, res) => {
   try {
