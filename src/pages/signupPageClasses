@@ -1,0 +1,8 @@
+const signupPageClasses = {
+    backgroundImage: "url('../images/andre-benz-bXuWgnBHEk8-unsplash.jpg'), url('../images/colton-duke-UExx0KnnkjY-unsplash.jpg'), url('../images/linus-nilsson-b-B0noptrrY-unsplash.jpg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  };
+  
+  export default signupPageClasses;
