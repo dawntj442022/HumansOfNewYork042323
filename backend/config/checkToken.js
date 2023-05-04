@@ -9,10 +9,19 @@ module.exports = function (req, res, next) {
   console.log("Token value:", token); // Add this line to log the token value
   jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
     if (err) {
-      return res.status(401).json({
-        message: "Unauthorized",
-        error: err,
-      });
+      if (err.name === "JsonWebTokenError") {
+        // Token has an invalid signature
+        return res.status(401).json({
+          message: "Invalid token signature",
+          error: err,
+        });
+      } else {
+        // Some other error occurred
+        return res.status(401).json({
+          message: "Unauthorized",
+          error: err,
+        });
+      }
     } else {
       console.log("Decoded userId:", decoded.userId); // add this line to log the decoded userId
       req.userId = decoded.userId;

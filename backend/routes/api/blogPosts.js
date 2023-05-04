@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const blogPostsController = require("../../controllers/api/blogPostsController");
 const ensureLoggedIn = require("../../config/ensureLoggedIn");
 const checkToken = require("../../config/checkToken");
@@ -36,7 +37,7 @@ router.put("/:id", function (req, res) {
 router.delete("/:id", function (req, res) {
   checkToken(req, res, function () {
     ensureLoggedIn(req, res, function () {
-      blogPostsController.delete(req, res);
+      blogPostsController.remove(req, res);
     });
   });
 });
