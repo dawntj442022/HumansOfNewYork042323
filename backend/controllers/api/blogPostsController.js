@@ -1,6 +1,3 @@
-const express = require("express");
-const router = express.Router();
-
 const BlogPost = require("../../models/blogPost");
 
 const getAll = async (req, res) => {
@@ -74,8 +71,6 @@ module.exports = {
   update,
   remove,
 };
-
-module.exports = router;
 
 //   async like(req, res) {
 //     try {

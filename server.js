@@ -12,7 +12,7 @@ const blogPostsRoutes = require("./backend/routes/api/blogPosts"); // Import the
 const app = express();
 
 var corsOptions = {
-  origin: ["http://localhost:3002"],
+  origin: ["http://localhost:3002", "http://localhost:3001"],
   optionsSuccessStatus: 200,
 };
 

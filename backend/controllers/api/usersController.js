@@ -20,8 +20,8 @@ const dataController = {
     try {
       console.log("Create user request received with data:", req.body);
       const { name, email, password } = req.body;
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await User.create({ name, email, password: hashedPassword });
+      // const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await User.create({ name, email, password });
       const token = createJWT(user);
 
       res.locals.data.user = user;
@@ -31,26 +31,28 @@ const dataController = {
       res.status(400).json(error);
     }
   },
-  async create(req, res, next) {
-    try {
-      const user = await User.create(req.body);
-      const token = createJWT(user);
+  // async create(req, res, next) {
+  //   try {
+  //     const user = await User.create(req.body);
+  //     const token = createJWT(user);
 
-      res.locals.data.user = user;
-      res.locals.data.token = token;
-      next();
-    } catch (error) {
-      res.status(400).json(error);
-    }
-  },
+  //     res.locals.data.user = user;
+  //     res.locals.data.token = token;
+  //     next();
+  //   } catch (error) {
+  //     res.status(400).json(error);
+  //   }
+  // },
 
   async login(req, res, next) {
     try {
       const { email, password } = req.body;
+      console.log({ email, password });
       const user = await User.findOne({ email: email });
       if (!user) {
         throw new Error("Invalid email");
       }
+      console.log({ user });
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
         throw new Error("Invalid email or password");
@@ -63,7 +65,7 @@ const dataController = {
 
       res.locals.data.user = userWithoutPassword;
       res.locals.data.token = token;
-      res.status(200);
+      // res.status(200);
       next();
     } catch (error) {
       console.error("Login error:", error);
@@ -75,6 +77,9 @@ const dataController = {
 const apiController = {
   auth(req, res) {
     res.json(res.locals.data.token);
+  },
+  async login(req, res) {
+    res.json({ user: res.locals.data.user, token: res.locals.data.token });
   },
 };
 
