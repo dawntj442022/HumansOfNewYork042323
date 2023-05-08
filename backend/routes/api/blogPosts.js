@@ -6,34 +6,17 @@ const ensureLoggedIn = require("../../config/ensureLoggedIn");
 const checkToken = require("../../config/checkToken");
 
 // Route to get all blog posts
-router.get("/", function (req, res) {
-  blogPostsController.getAll(req, res);
-});
+router.get("/", blogPostsController.getAll);
 
 // Route to get one blog post by ID
-router.get("/:id", function (req, res) {
-  blogPostsController.getOne(req, res);
-});
+router.get("/:id", blogPostsController.getOne);
 
 // Route to create a new blog post
 router.post("/", checkToken, ensureLoggedIn, blogPostsController.create);
 
 // Route to update an existing blog post by ID
-router.put("/:id", function (req, res) {
-  checkToken(req, res, function () {
-    ensureLoggedIn(req, res, function () {
-      blogPostsController.update(req, res);
-    });
-  });
-});
-
+router.put("/:id", checkToken, ensureLoggedIn, blogPostsController.update);
 // Route to delete a blog post by ID
-router.delete("/:id", function (req, res) {
-  checkToken(req, res, function () {
-    ensureLoggedIn(req, res, function () {
-      blogPostsController.remove(req, res);
-    });
-  });
-});
+router.delete("/:id", checkToken, ensureLoggedIn, blogPostsController.remove);
 
 module.exports = router;
