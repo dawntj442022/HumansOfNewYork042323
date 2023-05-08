@@ -19,6 +19,11 @@ router.get("/:id", function (req, res) {
 router.post("/", function (req, res) {
   checkToken(req, res, function () {
     ensureLoggedIn(req, res, function () {
+      // Check if user has permission to create a new blog post
+      if (req.user.role !== "admin" && req.user.role !== "editor") {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      // User has permission, proceed with creating the blog post
       blogPostsController.create(req, res);
     });
   });

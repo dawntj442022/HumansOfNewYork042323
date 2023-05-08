@@ -16,7 +16,7 @@ const UserPage = () => {
   const fetchUserPosts = useCallback(async () => {
     try {
       console.log("Fetching user posts...");
-      const res = await fetch(`/api/users/${id}/posts`, {
+      const res = await fetch(`/api/users/${id}/blogposts`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -40,26 +40,32 @@ const UserPage = () => {
   }, [user, fetchUserPosts]);
 
   const handleCreatePost = async (newPost) => {
-    const res = await fetch("/api/posts", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(newPost),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setPosts([...posts, data.post]);
-      setIsCreatingPost(false);
-    } else {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch("http://localhost:3001/api/blogPosts", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newPost),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPosts([...posts, data.post]);
+        setIsCreatingPost(false);
+      } else {
+        alert("Unable to create post. Please try again.");
+      }
+    } catch (error) {
+      console.error(error);
       alert("Unable to create post. Please try again.");
     }
   };
 
   const handleEditPost = async (postId, updatedPost) => {
-    const res = await fetch(`/api/posts/${postId}`, {
+    const res = await fetch(`/api/${id}/blogposts/${postId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -79,7 +85,7 @@ const UserPage = () => {
   };
 
   const handleDeletePost = async (postId) => {
-    const res = await fetch(`/api/posts/${postId}`, {
+    const res = await fetch(`/api/${id}/blogposts/${postId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

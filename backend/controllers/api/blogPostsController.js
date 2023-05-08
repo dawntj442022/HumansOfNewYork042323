@@ -1,5 +1,15 @@
 const BlogPost = require("../../models/blogPost");
 
+const create = async (req, res) => {
+  try {
+    const { body } = req;
+    const blogPost = await BlogPost.create({ ...body });
+    res.status(201).json(blogPost);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
+
 const getAll = async (req, res) => {
   try {
     const blogPosts = await BlogPost.find({});
@@ -18,16 +28,6 @@ const getOne = async (req, res) => {
     } else {
       res.status(200).json(blogPost);
     }
-  } catch (error) {
-    res.status(500).json({ error });
-  }
-};
-
-const create = async (req, res) => {
-  try {
-    const { body } = req;
-    const blogPost = await BlogPost.create({ ...body });
-    res.status(201).json(blogPost);
   } catch (error) {
     res.status(500).json({ error });
   }
