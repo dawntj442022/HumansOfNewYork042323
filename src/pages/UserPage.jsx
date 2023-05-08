@@ -41,6 +41,7 @@ const UserPage = () => {
 
   const handleCreatePost = async (newPost) => {
     const token = localStorage.getItem("token");
+    console.log(token);
     try {
       const res = await fetch(`/api/blogPosts`, {
         method: "POST",

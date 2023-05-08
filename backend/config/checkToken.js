@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 module.exports = function (req, res, next) {
   let token =
     req.headers["authorization"] || req.headers["Authorization"] || "";
+  console.log(token);
   if (token.startsWith("Bearer ")) {
     token = token.slice(7, token.length);
   }
@@ -24,7 +25,7 @@ module.exports = function (req, res, next) {
       }
     } else {
       console.log("Decoded userId:", decoded.userId); // add this line to log the decoded userId
-      req.userId = decoded.userId;
+      res.locals.data.userId = decoded.userId;
       next();
     }
   });

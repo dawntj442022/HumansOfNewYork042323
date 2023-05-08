@@ -3,9 +3,14 @@ const BlogPost = require("../../models/blogPost");
 const create = async (req, res) => {
   try {
     const { body } = req;
-    const blogPost = await BlogPost.create({ ...body });
+    console.log(body);
+    const blogPost = await BlogPost.create({
+      ...body,
+      author: res.locals.data.userId,
+    });
     res.status(201).json(blogPost);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error });
   }
 };
