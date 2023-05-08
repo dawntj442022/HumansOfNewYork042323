@@ -42,7 +42,7 @@ const UserPage = () => {
   const handleCreatePost = async (newPost) => {
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:3001/api/blogPosts", {
+      const res = await fetch(`/api/blogPosts`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -65,7 +65,7 @@ const UserPage = () => {
   };
 
   const handleEditPost = async (postId, updatedPost) => {
-    const res = await fetch(`/api/${id}/blogposts/${postId}`, {
+    const res = await fetch(`/api/blogposts/:id`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -85,7 +85,7 @@ const UserPage = () => {
   };
 
   const handleDeletePost = async (postId) => {
-    const res = await fetch(`/api/${id}/blogposts/${postId}`, {
+    const res = await fetch(`/api/blogposts/:id`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,

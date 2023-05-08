@@ -19,7 +19,6 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(logger("dev"));
-app.use(express.json());
 
 // Configure both serve-favicon & static middleware
 // to serve from the production 'build' folder
@@ -45,6 +44,11 @@ app.get("/data", (req, res) => {
 // "catch all" route
 app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+app.post("/api/blogPosts", (req, res) => {
+  const newPost = req.body;
+  console.log("New post:", newPost);
 });
 
 // Configure to use port 3001 instead of 3000 during

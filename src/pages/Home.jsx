@@ -32,6 +32,44 @@ const Home = () => {
     setPosts(updatedPosts);
   };
 
+  const handleDelete = (postId) => {
+    fetch(`/api/blogPosts/${postId}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const updatedPosts = posts.filter((post) => post._id !== data._id);
+        setPosts(updatedPosts);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleEdit = (postId, updatedPost) => {
+    fetch(`/api/blogPosts/${postId}`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedPost),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const updatedPosts = posts.map((post) => {
+          if (post._id === data._id) {
+            return data;
+          }
+          return post;
+        });
+        setPosts(updatedPosts);
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <>
       <Navigation />
@@ -40,7 +78,11 @@ const Home = () => {
         {posts.length > 0 ? (
           posts.map((post) => (
             <div key={post._id}>
-              <Post post={post} />
+              <Post
+                post={post}
+                onDelete={() => handleDelete(post._id)}
+                onEdit={(updatedPost) => handleEdit(post._id, updatedPost)}
+              />
               <Thumbs
                 postId={post._id}
                 liked={post.liked}
