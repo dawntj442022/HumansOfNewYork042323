@@ -32,11 +32,21 @@ const UserPage = () => {
     }
   }, [id, history]);
 
+  // useEffect(() => {
+  //   console.log("User ID:", user?._id);
+  //   if (user) {
+  //     fetchUserPosts();
+  //   }
+  // }, [user, fetchUserPosts]);
+
   useEffect(() => {
-    console.log("User ID:", user?._id);
-    if (user) {
-      fetchUserPosts();
-    }
+    const fetchPosts = async () => {
+      const res = await fetch("/api/blogPosts");
+      const data = await res.json();
+      setPosts(data);
+    };
+
+    fetchPosts();
   }, [user, fetchUserPosts]);
 
   const handleCreatePost = async (newPost) => {
