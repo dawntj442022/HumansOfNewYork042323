@@ -8,6 +8,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const usersRoutes = require("./backend/routes/api/users");
 const blogPostsRoutes = require("./backend/routes/api/blogPosts"); // Import the blogPosts routes
+const blogPost = require("./backend/models/blogPost");
 
 const app = express();
 
@@ -49,6 +50,37 @@ app.get("/*", function (req, res) {
 app.post("/api/blogPosts", (req, res) => {
   const newPost = req.body;
   console.log("New post:", newPost);
+});
+
+app.post("/api/blogPosts/:id/like", async (req, res) => {
+  const postId = req.params.id;
+  const isLiked = req.body.isLiked;
+
+  try {
+    // Find the blog post in the database
+    const post = await blogPost.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: "Blog post not found" });
+    }
+
+    // Update the likes/dislikes based on the user's action
+    if (isLiked) {
+      post.likes += 1;
+      post.dislikes -= 1;
+    } else {
+      post.likes -= 1;
+      post.dislikes += 1;
+    }
+
+    // Save the updated post to the database
+    await post.save();
+
+    // Return the updated post
+    res.json(post);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 // Configure to use port 3001 instead of 3000 during

@@ -6,17 +6,41 @@ const Thumbs = ({ postId, likes, dislikes, handleLike, handleDislike }) => {
 
   const handleLikeClick = () => {
     if (!liked) {
-      handleLike(postId);
-      setLiked(true);
-      setDisliked(false);
+      fetch(`/api/blogPosts/${postId}/like`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          handleLike(data._id, data.likes);
+          setLiked(true);
+          setDisliked(false);
+        })
+        .catch((err) => console.error(err));
     }
   };
 
   const handleDislikeClick = () => {
     if (!disliked) {
-      handleDislike(postId);
-      setDisliked(true);
-      setLiked(false);
+      fetch(`/api/blogPosts/${postId}/dislike`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          handleDislike(data._id, data.dislikes);
+          setDisliked(true);
+          setLiked(false);
+        })
+        .catch((err) => console.error(err));
     }
   };
 

@@ -16,14 +16,16 @@ const UserPage = () => {
   const fetchUserPosts = useCallback(async () => {
     try {
       console.log("Fetching user posts...");
-      const res = await fetch(`/api/users/${id}/blogposts`, {
+      const res = await fetch(`/api/blogPosts/author/${id}`, {
         headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       if (res.ok) {
         const data = await res.json();
-        setPosts(data.posts);
+        setPosts(data);
       } else {
         history.push("/login");
       }
@@ -32,22 +34,22 @@ const UserPage = () => {
     }
   }, [id, history]);
 
-  // useEffect(() => {
-  //   console.log("User ID:", user?._id);
-  //   if (user) {
-  //     fetchUserPosts();
-  //   }
-  // }, [user, fetchUserPosts]);
-
   useEffect(() => {
-    const fetchPosts = async () => {
-      const res = await fetch("/api/blogPosts");
-      const data = await res.json();
-      setPosts(data);
-    };
+    console.log("User ID:", user?._id);
+    if (user && user._id === id) {
+      fetchUserPosts();
+    }
+  }, [user, fetchUserPosts, id]);
 
-    fetchPosts();
-  }, [user, fetchUserPosts]);
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     const res = await fetch("/api/blogPosts");
+  //     const data = await res.json();
+  //     setPosts(data);
+  //   };
+
+  //   fetchPosts();
+  // }, [user, fetchUserPosts]);
 
   const handleCreatePost = async (newPost) => {
     const token = localStorage.getItem("token");
@@ -82,13 +84,15 @@ const UserPage = () => {
     const res = await fetch(`/api/blogPosts/${postId}`, {
       method: "PUT",
       headers: {
+        Accept: "application/json",
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify(updatedPost),
+      body: JSON.stringify(updatedPost, null, 2),
     });
     if (res.ok) {
       const data = await res.json();
+      console.log(data);
       const updatedPosts = posts.map((post) =>
         post._id === data.post._id ? data.post : post
       );
@@ -127,18 +131,20 @@ const UserPage = () => {
       {user._id === id && (
         <button onClick={() => setIsCreatingPost(true)}>Create Post</button>
       )}
-      {isCreatingPost && <PostForm onSubmit={handleCreatePost} />}
+      {isCreatingPost && <PostForm post={null} onSubmit={handleCreatePost} />}
       <hr />
       <div className="row">
-        {posts.map((post) => (
-          <div className="col-md-6" key={post._id}>
-            <Post
-              post={post}
-              onEdit={(updatedPost) => handleEditPost(post._id, updatedPost)}
-              onDelete={() => handleDeletePost(post._id)}
-            />
-          </div>
-        ))}
+        {posts
+          .filter((post) => post !== undefined) // Add this line to filter out undefined posts
+          .map((post) => (
+            <div className="col-md-6" key={post._id}>
+              <Post
+                post={post}
+                onEdit={(updatedPost) => handleEditPost(post._id, updatedPost)}
+                onDelete={() => handleDeletePost(post._id)}
+              />
+            </div>
+          ))}
       </div>
     </div>
   );

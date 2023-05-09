@@ -25,7 +25,7 @@ function LoginForm() {
       }
 
       const data = await res.json();
-      console.log(data);
+      console.log("Data received from server:", data);
       localStorage.setItem("token", data.token);
       setUser(data.user);
       history.push(`/users/${data.user._id}`);

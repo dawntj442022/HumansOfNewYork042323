@@ -24,20 +24,41 @@ const Home = () => {
     fetchPosts();
   }, []);
 
-  const handleLike = (postId, isLiked) => {
-    const updatedPosts = posts.map((post) => {
-      if (post._id === postId) {
-        return {
-          ...post,
-          likes: isLiked ? post.likes - 1 : post.likes + 1,
-          dislikes: isLiked ? post.dislikes + 1 : post.dislikes - 1,
-          liked: !isLiked,
-          disliked: isLiked ? false : post.disliked,
-        };
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     const res = await fetch("/api/blogPosts");
+  //     const data = await res.json();
+  //     setPosts(data);
+  //   };
+
+  //   fetchPosts();
+  // }, [user, fetchUserPosts]);
+
+  const handleLike = async (postId, isLiked) => {
+    try {
+      const response = await fetch(`/api/blogPosts/${postId}/like`, {
+        method: isLiked ? "DELETE" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.ok) {
+        const updatedPost = await response.json();
+        const updatedPosts = posts.map((post) => {
+          if (post._id === updatedPost._id) {
+            return updatedPost;
+          }
+          return post;
+        });
+        setPosts(updatedPosts);
+      } else {
+        console.error("Failed to like/dislike post", response.status);
       }
-      return post;
-    });
-    setPosts(updatedPosts);
+    } catch (error) {
+      console.error("Failed to like/dislike post", error);
+    }
   };
 
   const handleDelete = async (postId) => {
@@ -75,7 +96,10 @@ const Home = () => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(updatedPost),
+      body: JSON.stringify({
+        title: updatedPost.title,
+        content: updatedPost.content,
+      }),
     });
     console.log(res.status);
     if (res.ok) {

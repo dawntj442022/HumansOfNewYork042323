@@ -25,4 +25,17 @@ router.put("/:id", checkToken, ensureLoggedIn, blogPostsController.update);
 // Route to delete a blog post by ID
 router.delete("/:id", checkToken, ensureLoggedIn, blogPostsController.remove);
 
+// Route to like a blog post by ID: /api/blogPosts/:id/like
+router.post("/:id/like", checkToken, ensureLoggedIn, blogPostsController.like);
+
+// Route to dislike a blog post by ID: /api/blogPosts/:id/dislike
+router.post(
+  "/:id/dislike",
+  checkToken,
+  ensureLoggedIn,
+  blogPostsController.dislike
+);
+
+router.get("/author/:authorId", blogPostsController.getByAuthor);
+
 module.exports = router;
