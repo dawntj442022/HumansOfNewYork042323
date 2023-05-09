@@ -77,7 +77,9 @@ const UserPage = () => {
   };
 
   const handleEditPost = async (postId, updatedPost) => {
-    const res = await fetch(`/api/blogposts/:id`, {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    const res = await fetch(`/api/blogPosts/${postId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -121,7 +123,7 @@ const UserPage = () => {
 
   return (
     <div className="container">
-      <h1 className="text-center mt-5">{user.username}'s Blog</h1>
+      <h1 className="text-center mt-5">{user.username} Blog</h1>
       {user._id === id && (
         <button onClick={() => setIsCreatingPost(true)}>Create Post</button>
       )}
@@ -132,8 +134,8 @@ const UserPage = () => {
           <div className="col-md-6" key={post._id}>
             <Post
               post={post}
-              onEdit={handleEditPost}
-              onDelete={handleDeletePost}
+              onEdit={(updatedPost) => handleEditPost(post._id, updatedPost)}
+              onDelete={() => handleDeletePost(post._id)}
             />
           </div>
         ))}

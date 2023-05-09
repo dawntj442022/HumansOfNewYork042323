@@ -32,53 +32,54 @@ const Home = () => {
     setPosts(updatedPosts);
   };
 
-  const handleDelete = (postId) => {
+  const handleDelete = async (postId) => {
     const token = localStorage.getItem("token");
-    console.log("Before fetch");
-    fetch(`/api/blogPosts/${postId}`, {
+    console.log(token);
+    const res = await fetch(`/api/blogPosts/${postId}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(postId),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Data:", data);
-        const updatedPosts = posts.filter((post) => post._id !== data._id);
-        setPosts(updatedPosts);
-      })
-      .catch((err) => console.log(err));
-    console.log("After fetch");
+      body: null,
+    });
+    console.log(res.status);
+    if (res.ok) {
+      setPosts(posts.filter((post) => post._id !== postId));
+    } else {
+      alert("Unable to delete post. Please try again.");
+    }
   };
 
-  const handleEdit = (postId, updatedPost) => {
-    console.log("Before fetch");
-    fetch(`/api/blogPosts/${postId}`, {
+  // if (!user) {
+  //   return <div>Loading...</div>;
+  // }
+
+  const handleEdit = async (postId, updatedPost) => {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    // console.log("Before fetch");
+    const res = await fetch(`/api/blogPosts/${postId}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(updatedPost),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Data:", data);
-        const updatedPosts = posts.map((post) => {
-          if (post._id === data._id) {
-            return data;
-          }
-          return post;
-        });
-        setPosts(updatedPosts);
-      })
-      .catch((err) => console.log(err));
-    console.log("After fetch");
+    });
+    console.log(res.status);
+    if (res.ok) {
+      const data = await res.json();
+      const updatedPosts = posts.map((post) =>
+        post._id === data._id ? data : post
+      );
+      setPosts(updatedPosts);
+    } else {
+      alert("Unable to update post. Please try again.");
+    }
   };
-
   return (
     <>
       <Navigation />

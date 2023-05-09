@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const PostForm = ({ onSubmit }) => {
+const PostForm = ({ post, onSubmit }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+
+  useEffect(() => {
+    setTitle(post.title);
+    setContent(post.content);
+  }, [post]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
