@@ -2,9 +2,17 @@ import React, { useState, useEffect } from "react";
 import Navigation from "../components/Navigation";
 import Post from "../components/Post";
 import Thumbs from "../components/Thumbs";
+import { useUserStore } from "../store";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("token");
+  };
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -72,17 +80,19 @@ const Home = () => {
     console.log(res.status);
     if (res.ok) {
       const data = await res.json();
+      console.log(data);
       const updatedPosts = posts.map((post) =>
         post._id === data._id ? data : post
       );
       setPosts(updatedPosts);
+      console.log(updatedPost);
     } else {
       alert("Unable to update post. Please try again.");
     }
   };
   return (
     <>
-      <Navigation />
+      <Navigation user={user} onLogout={handleLogout} />
       <div className="container">
         <h1 className="text-center mt-5">All Posts</h1>
         {posts.length > 0 ? (

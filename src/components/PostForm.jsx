@@ -5,8 +5,10 @@ const PostForm = ({ post, onSubmit }) => {
   const [content, setContent] = useState("");
 
   useEffect(() => {
-    setTitle(post.title);
-    setContent(post.content);
+    if (post) {
+      setTitle(post.title);
+      setContent(post.content);
+    }
   }, [post]);
 
   const handleSubmit = (e) => {

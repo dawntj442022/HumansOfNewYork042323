@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Navigation = ({ user }) => {
+const Navigation = ({ user, onLogout }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -29,9 +29,13 @@ const Navigation = ({ user }) => {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/logout">
+                  <button
+                    className="nav-link"
+                    onClick={onLogout}
+                    style={{ border: "none", background: "none" }}
+                  >
                     Logout
-                  </Link>
+                  </button>
                 </li>
               </>
             ) : (
