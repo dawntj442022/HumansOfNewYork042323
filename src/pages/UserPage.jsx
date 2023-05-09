@@ -53,7 +53,7 @@ const UserPage = () => {
     const token = localStorage.getItem("token");
     console.log(token);
     try {
-      const res = await fetch(`/api/blogPosts`, {
+      const res = await fetch("/api/blogPosts", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -67,7 +67,8 @@ const UserPage = () => {
         setPosts([...posts, data.post]);
         setIsCreatingPost(false);
       } else {
-        alert("Unable to create post. Please try again.");
+        const data = await res.json();
+        alert(data.message);
       }
     } catch (error) {
       console.error(error);
@@ -96,11 +97,16 @@ const UserPage = () => {
   };
 
   const handleDeletePost = async (postId) => {
-    const res = await fetch(`/api/blogposts/:id`, {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    const res = await fetch(`/api/blogPosts/${postId}`, {
       method: "DELETE",
       headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
+      body: null,
     });
     if (res.ok) {
       setPosts(posts.filter((post) => post._id !== postId));

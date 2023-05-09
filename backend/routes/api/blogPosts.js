@@ -12,7 +12,13 @@ router.get("/", blogPostsController.getAll);
 router.get("/:id", blogPostsController.getOne);
 
 // Route to create a new blog post
-router.post("/", checkToken, ensureLoggedIn, blogPostsController.create);
+router.post(
+  "/",
+  checkToken,
+  ensureLoggedIn,
+  blogPostsController.create
+  //   blogPostsController.addToUser
+);
 
 // Route to update an existing blog post by ID
 router.put("/:id", checkToken, ensureLoggedIn, blogPostsController.update);

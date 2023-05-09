@@ -33,22 +33,29 @@ const Home = () => {
   };
 
   const handleDelete = (postId) => {
+    const token = localStorage.getItem("token");
+    console.log("Before fetch");
     fetch(`/api/blogPosts/${postId}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify(postId),
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log("Data:", data);
         const updatedPosts = posts.filter((post) => post._id !== data._id);
         setPosts(updatedPosts);
       })
       .catch((err) => console.log(err));
+    console.log("After fetch");
   };
 
   const handleEdit = (postId, updatedPost) => {
+    console.log("Before fetch");
     fetch(`/api/blogPosts/${postId}`, {
       method: "PUT",
       headers: {
@@ -59,6 +66,7 @@ const Home = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log("Data:", data);
         const updatedPosts = posts.map((post) => {
           if (post._id === data._id) {
             return data;
@@ -68,6 +76,7 @@ const Home = () => {
         setPosts(updatedPosts);
       })
       .catch((err) => console.log(err));
+    console.log("After fetch");
   };
 
   return (
