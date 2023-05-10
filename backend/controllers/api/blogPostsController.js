@@ -125,42 +125,60 @@ const like = async (req, res) => {
         { $addToSet: { likes: userId }, $pull: { dislikes: userId } },
         { new: true } // Return the updated document
       );
-      res
-        .status(200)
-        .json({
-          message: "Post liked",
-          likes: updatedBlogPost.likes.length,
-          dislikes: updatedBlogPost.dislikes.length,
-        });
+      res.status(200).json({
+        message: "Post liked",
+        likes: updatedBlogPost.likes.length,
+        dislikes: updatedBlogPost.dislikes.length,
+      });
     }
   } catch (err) {
     res.status(500).json({ message: "Error liking the post", error: err });
   }
 };
 
-const dislike = async (req, res) => {
-  try {
-    const updatedBlogPost = await BlogPost.findOneAndUpdate(
-      { _id: req.params.id, dislikes: { $ne: res.locals.data.userId } },
-      {
-        $addToSet: { dislikes: res.locals.data.userId },
-        $pull: { likes: res.locals.data.userId },
-      },
-      { new: true }
-    );
+async function dislike(req, res) {
+  const postId = req.params.id;
+  const userId = res.locals.data.userId;
 
-    if (!updatedBlogPost) {
-      res
-        .status(404)
-        .json({ message: "Blog post not found or already disliked." });
+  try {
+    let blogPost = await BlogPost.findById(postId);
+
+    if (!blogPost) {
+      return res.status(404).json({ message: "Blog post not found" });
+    }
+
+    let updatedBlogPost;
+
+    if (blogPost.dislikes.indexOf(userId) !== -1) {
+      // Remove userId from dislikes
+      updatedBlogPost = await BlogPost.findOneAndUpdate(
+        { _id: postId },
+        { $pull: { dislikes: userId } },
+        { new: true } // Return the updated document
+      );
+      res.status(200).json({
+        message: "Dislike removed",
+        likes: updatedBlogPost.likes.length,
+        dislikes: updatedBlogPost.dislikes.length,
+      });
     } else {
-      res.json(updatedBlogPost);
+      // Add userId to dislikes and remove from likes if present
+      updatedBlogPost = await BlogPost.findOneAndUpdate(
+        { _id: postId },
+        { $addToSet: { dislikes: userId }, $pull: { likes: userId } },
+        { new: true } // Return the updated document
+      );
+      res.status(200).json({
+        message: "Post disliked",
+        likes: updatedBlogPost.likes.length,
+        dislikes: updatedBlogPost.dislikes.length,
+      });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error disliking blog post." });
+    res.status(500).json({ message: "Internal server error" });
   }
-};
+}
 
 const getByAuthor = async (req, res) => {
   try {
