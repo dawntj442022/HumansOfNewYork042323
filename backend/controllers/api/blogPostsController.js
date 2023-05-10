@@ -17,8 +17,15 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    const blogPosts = await BlogPost.find({});
-    res.status(200).json(blogPosts);
+    const blogPosts = await BlogPost.find({}).lean();
+    const blogPostsWithCounts = blogPosts.map((post) => {
+      return {
+        ...post,
+        likesCount: post.likes.length,
+        dislikesCount: post.dislikes.length,
+      };
+    });
+    res.status(200).json(blogPostsWithCounts);
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -27,11 +34,16 @@ const getAll = async (req, res) => {
 const getOne = async (req, res) => {
   try {
     const { id } = req.params;
-    const blogPost = await BlogPost.findOne({ _id: id });
+    const blogPost = await BlogPost.findOne({ _id: id }).lean();
     if (!blogPost) {
       res.status(404).json({ message: "Blog post not found" });
     } else {
-      res.status(200).json(blogPost);
+      const blogPostWithCounts = {
+        ...blogPost,
+        likesCount: blogPost.likes.length,
+        dislikesCount: blogPost.dislikes.length,
+      };
+      res.status(200).json(blogPostWithCounts);
     }
   } catch (error) {
     res.status(500).json({ error });
@@ -97,7 +109,7 @@ const like = async (req, res) => {
 
   try {
     const blogPost = await BlogPost.findById(postId);
-
+    console.log("Initial Blog Post:", blogPost);
     if (!Array.isArray(blogPost.likes) || !Array.isArray(blogPost.dislikes)) {
       return res.status(400).json({
         message: "Invalid data format in the database",
@@ -131,6 +143,7 @@ const like = async (req, res) => {
         dislikes: updatedBlogPost.dislikes.length,
       });
     }
+    console.log("Updated Blog Post after liking:", updatedBlogPost);
   } catch (err) {
     res.status(500).json({ message: "Error liking the post", error: err });
   }
@@ -142,7 +155,7 @@ async function dislike(req, res) {
 
   try {
     let blogPost = await BlogPost.findById(postId);
-
+    console.log("Initial Blog Post:", blogPost);
     if (!blogPost) {
       return res.status(404).json({ message: "Blog post not found" });
     }
@@ -174,6 +187,7 @@ async function dislike(req, res) {
         dislikes: updatedBlogPost.dislikes.length,
       });
     }
+    console.log("Updated Blog Post after disliking:", updatedBlogPost);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

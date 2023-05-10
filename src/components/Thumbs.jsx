@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-const Thumbs = ({ postId }) => {
+const Thumbs = ({ postId, initialLikes = [], initialDisLikes = [] }) => {
   console.log("Post ID value:", postId);
-  const [likes, setLikes] = useState(0);
-  const [dislikes, setDislikes] = useState(0);
+  const [likes, setLikes] = useState(initialLikes);
+  const [dislikes, setDislikes] = useState(initialDisLikes);
 
   const handleLikeClick = () => {
     const token = localStorage.getItem("token");
@@ -54,13 +54,13 @@ const Thumbs = ({ postId }) => {
           👍
         </span>
       </button>
-      <span>{likes}</span>
+      <span>{likes.length}</span>
       <button onClick={handleDislikeClick}>
         <span role="img" aria-label="thumbs-down">
           👎
         </span>
       </button>
-      <span>{dislikes}</span>
+      <span>{dislikes.length}</span>
     </div>
   );
 };
