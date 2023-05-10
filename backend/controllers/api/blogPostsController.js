@@ -104,20 +104,34 @@ const like = async (req, res) => {
       });
     }
 
+    let updatedBlogPost;
+
     if (blogPost.likes.indexOf(userId) !== -1) {
       // Remove userId from likes
-      await BlogPost.findOneAndUpdate(
+      updatedBlogPost = await BlogPost.findOneAndUpdate(
         { _id: postId },
-        { $pull: { likes: userId } }
+        { $pull: { likes: userId } },
+        { new: true } // Return the updated document
       );
-      res.status(200).json({ message: "Like removed" });
+      res.status(200).json({
+        message: "Like removed",
+        likes: updatedBlogPost.likes.length,
+        dislikes: updatedBlogPost.dislikes.length,
+      });
     } else {
       // Add userId to likes and remove from dislikes if present
-      await BlogPost.findOneAndUpdate(
+      updatedBlogPost = await BlogPost.findOneAndUpdate(
         { _id: postId },
-        { $addToSet: { likes: userId }, $pull: { dislikes: userId } }
+        { $addToSet: { likes: userId }, $pull: { dislikes: userId } },
+        { new: true } // Return the updated document
       );
-      res.status(200).json({ message: "Post liked" });
+      res
+        .status(200)
+        .json({
+          message: "Post liked",
+          likes: updatedBlogPost.likes.length,
+          dislikes: updatedBlogPost.dislikes.length,
+        });
     }
   } catch (err) {
     res.status(500).json({ message: "Error liking the post", error: err });
