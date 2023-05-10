@@ -9,6 +9,7 @@ const Post = ({ post, onDelete, onEdit }) => {
   };
 
   const handleEdit = (updatedPost) => {
+    console.log("Handling edit for post:", updatedPost);
     onEdit(post._id, updatedPost);
     setIsEditing(false);
   };

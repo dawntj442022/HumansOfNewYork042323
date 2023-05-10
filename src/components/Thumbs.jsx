@@ -1,47 +1,50 @@
 import React, { useState } from "react";
 
-const Thumbs = ({ postId, likes, dislikes, handleLike, handleDislike }) => {
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
+const Thumbs = ({ postId }) => {
+  console.log("Post ID value:", postId);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
 
   const handleLikeClick = () => {
-    if (!liked) {
-      fetch(`/api/blogPosts/${postId}/like`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+    const token = localStorage.getItem("token");
+    console.log("Token value:", token);
+    fetch(`/api/blogPosts/${postId}/like`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // Update the post's likes count
+        setLikes(data.likes);
       })
-        .then((res) => res.json())
-        .then((data) => {
-          handleLike(data._id, data.likes);
-          setLiked(true);
-          setDisliked(false);
-        })
-        .catch((err) => console.error(err));
-    }
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const handleDislikeClick = () => {
-    if (!disliked) {
-      fetch(`/api/blogPosts/${postId}/dislike`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+    const token = localStorage.getItem("token");
+    console.log("Token value:", token);
+    fetch(`/api/blogPosts/${postId}/dislike`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // Update the post's dislikes count
+        setDislikes(data.dislikes);
       })
-        .then((res) => res.json())
-        .then((data) => {
-          handleDislike(data._id, data.dislikes);
-          setDisliked(true);
-          setLiked(false);
-        })
-        .catch((err) => console.error(err));
-    }
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   return (

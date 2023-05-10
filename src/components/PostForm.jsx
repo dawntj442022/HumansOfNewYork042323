@@ -13,7 +13,8 @@ const PostForm = ({ post, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ title, content });
+    console.log("submitting updated post:", { ...post, title, content });
+    onSubmit({ ...post, title, content });
     setTitle("");
     setContent("");
   };

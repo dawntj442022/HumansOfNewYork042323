@@ -90,51 +90,64 @@ const remove = async (req, res) => {
     res.status(500).json({ error });
   }
 };
-const { ObjectID } = require("mongodb");
+
 const like = async (req, res) => {
+  const userId = res.locals.data.userId;
+  const postId = req.params.id;
+
   try {
-    const blogPost = await BlogPost.findById(req.params.id);
-    if (!blogPost) {
-      res.status(404).json({ message: "Blog post not found." });
-    } else {
-      const { isLiked } = blogPost.likes.find(
-        (like) => like.user.toString() === req.user._id.toString()
-      ) || { isLiked: false };
-      blogPost.likes = blogPost.likes.filter(
-        (like) => like.user.toString() !== req.user._id.toString()
-      );
-      if (!isLiked) {
-        blogPost.likes.push({ user: ObjectID(req.user._id), isLiked: true });
-      }
-      const savedPost = await blogPost.save();
-      res.json(savedPost);
+    const blogPost = await BlogPost.findById(postId);
+
+    if (!Array.isArray(blogPost.likes) || !Array.isArray(blogPost.dislikes)) {
+      return res.status(400).json({
+        message: "Invalid data format in the database",
+      });
     }
-  } catch (error) {
-    res.status(500).json({ message: "Error liking blog post." });
+
+    if (blogPost.likes.indexOf(userId) !== -1) {
+      // Remove userId from likes
+      await BlogPost.findOneAndUpdate(
+        { _id: postId },
+        { $pull: { likes: userId } }
+      );
+      res.status(200).json({ message: "Like removed" });
+    } else {
+      // Add userId to likes and remove from dislikes if present
+      await BlogPost.findOneAndUpdate(
+        { _id: postId },
+        { $addToSet: { likes: userId }, $pull: { dislikes: userId } }
+      );
+      res.status(200).json({ message: "Post liked" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Error liking the post", error: err });
   }
 };
+
 const dislike = async (req, res) => {
   try {
-    const blogPost = await BlogPost.findById(req.params.id);
-    if (!blogPost) {
-      res.status(404).json({ message: "Blog post not found." });
+    const updatedBlogPost = await BlogPost.findOneAndUpdate(
+      { _id: req.params.id, dislikes: { $ne: res.locals.data.userId } },
+      {
+        $addToSet: { dislikes: res.locals.data.userId },
+        $pull: { likes: res.locals.data.userId },
+      },
+      { new: true }
+    );
+
+    if (!updatedBlogPost) {
+      res
+        .status(404)
+        .json({ message: "Blog post not found or already disliked." });
     } else {
-      const { isDisliked } = blogPost.likes.find(
-        (like) => like.user.toString() === req.user._id.toString()
-      ) || { isDisliked: false };
-      blogPost.likes = blogPost.likes.filter(
-        (like) => like.user.toString() !== req.user._id.toString()
-      );
-      if (!isDisliked) {
-        blogPost.likes.push({ user: ObjectID(req.user._id), isDisliked: true });
-      }
-      const savedPost = await blogPost.save();
-      res.json(savedPost);
+      res.json(updatedBlogPost);
     }
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Error disliking blog post." });
   }
 };
+
 const getByAuthor = async (req, res) => {
   try {
     const authorId = req.params.authorId;

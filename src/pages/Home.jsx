@@ -10,11 +10,13 @@ const Home = () => {
   const setUser = useUserStore((state) => state.setUser);
 
   const handleLogout = () => {
+    console.log("Before logout token:", localStorage.getItem("token"));
     setUser(null);
     localStorage.removeItem("token");
   };
 
   useEffect(() => {
+    console.log("Token value:", localStorage.getItem("token"));
     const fetchPosts = async () => {
       const res = await fetch("/api/blogPosts");
       const data = await res.json();
@@ -33,33 +35,6 @@ const Home = () => {
 
   //   fetchPosts();
   // }, [user, fetchUserPosts]);
-
-  const handleLike = async (postId, isLiked) => {
-    try {
-      const response = await fetch(`/api/blogPosts/${postId}/like`, {
-        method: isLiked ? "DELETE" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (response.ok) {
-        const updatedPost = await response.json();
-        const updatedPosts = posts.map((post) => {
-          if (post._id === updatedPost._id) {
-            return updatedPost;
-          }
-          return post;
-        });
-        setPosts(updatedPosts);
-      } else {
-        console.error("Failed to like/dislike post", response.status);
-      }
-    } catch (error) {
-      console.error("Failed to like/dislike post", error);
-    }
-  };
 
   const handleDelete = async (postId) => {
     const token = localStorage.getItem("token");
@@ -129,11 +104,8 @@ const Home = () => {
               />
               <Thumbs
                 postId={post._id}
-                liked={post.liked}
-                disliked={post.disliked}
-                likes={post.likes}
-                dislikes={post.dislikes}
-                handleLike={handleLike}
+                initialLikes={post.likes}
+                initialDislikes={post.dislikes}
               />
             </div>
           ))

@@ -8,7 +8,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const usersRoutes = require("./backend/routes/api/users");
 const blogPostsRoutes = require("./backend/routes/api/blogPosts"); // Import the blogPosts routes
-const blogPost = require("./backend/models/blogPost");
+// const blogPost = require("./backend/models/blogPost");
 
 const app = express();
 
@@ -20,6 +20,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(logger("dev"));
+app.use(express.json());
 
 // Configure both serve-favicon & static middleware
 // to serve from the production 'build' folder
@@ -52,36 +53,41 @@ app.post("/api/blogPosts", (req, res) => {
   console.log("New post:", newPost);
 });
 
-app.post("/api/blogPosts/:id/like", async (req, res) => {
-  const postId = req.params.id;
-  const isLiked = req.body.isLiked;
+// app.post("/api/blogPosts/:id/like", async (req, res) => {
+//   const postId = req.params.id;
 
-  try {
-    // Find the blog post in the database
-    const post = await blogPost.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: "Blog post not found" });
-    }
+//   try {
+//     const post = await blogPost.findById(postId);
+//     if (!post) {
+//       return res.status(404).json({ message: "Blog post not found" });
+//     }
 
-    // Update the likes/dislikes based on the user's action
-    if (isLiked) {
-      post.likes += 1;
-      post.dislikes -= 1;
-    } else {
-      post.likes -= 1;
-      post.dislikes += 1;
-    }
+//     post.likes += 1;
+//     await post.save();
+//     res.json({ likes: post.likes });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
 
-    // Save the updated post to the database
-    await post.save();
+// app.post("/api/blogPosts/:id/dislike", async (req, res) => {
+//   const postId = req.params.id;
 
-    // Return the updated post
-    res.json(post);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
+//   try {
+//     const post = await blogPost.findById(postId);
+//     if (!post) {
+//       return res.status(404).json({ message: "Blog post not found" });
+//     }
+
+//     post.dislikes += 1;
+//     await post.save();
+//     res.json({ dislikes: post.dislikes });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
 
 // Configure to use port 3001 instead of 3000 during
 // development to avoid collision with React's dev server

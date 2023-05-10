@@ -26,9 +26,13 @@ const SignupPage = () => {
     });
     if (res.ok) {
       const data = await res.json();
+      console.log("Data received from server:", data); // Log the received data
+      console.log("Token received:", data.token); // Add this line to verify the token
       setUser(data.user);
       localStorage.setItem("token", data.token);
+      console.log("Token set in SignupPage:", localStorage.getItem("token"));
       history.push("/login");
+      // history.push(`/users/${data.user._id}`);
     } else {
       const errorResponse = await res.json();
       alert(`Signup failed: ${errorResponse.errors.name.message}`);

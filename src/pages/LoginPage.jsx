@@ -32,7 +32,8 @@ const LoginPage = () => {
     });
     if (res.ok) {
       const data = await res.json();
-      console.log("Data received from server:", data); // Log the received data
+      console.log("Data received from server:", data);
+      console.log("Token received:", data.token);
 
       setUser(data.user);
       localStorage.setItem("token", data.token);

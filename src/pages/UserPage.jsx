@@ -77,30 +77,71 @@ const UserPage = () => {
       alert("Unable to create post. Please try again.");
     }
   };
-
   const handleEditPost = async (postId, updatedPost) => {
-    const token = localStorage.getItem("token");
-    console.log(token);
-    const res = await fetch(`/api/blogPosts/${postId}`, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(updatedPost, null, 2),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      console.log(data);
-      const updatedPosts = posts.map((post) =>
-        post._id === data.post._id ? data.post : post
+    console.log(
+      "Editing post with ID:",
+      postId,
+      " and updated data:",
+      updatedPost
+    );
+
+    try {
+      const response = await fetch(
+        `http://localhost:3002/api/blogPosts/${postId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(updatedPost),
+        }
       );
-      setPosts(updatedPosts);
-    } else {
-      alert("Unable to update post. Please try again.");
+
+      if (!response.ok) {
+        console.log("Error status code:", response.status);
+        console.log("Error status text:", response.statusText);
+        const errorResponse = await response.json();
+        console.log("Server error message:", errorResponse.message);
+        throw new Error("Failed to edit the post");
+      }
+
+      const responseData = await response.json();
+      console.log("Edited post:", responseData);
+    } catch (error) {
+      console.log("Error while editing post:", error);
     }
   };
+
+  // const handleEditPost = async (postId, updatedPost) => {
+  //   console.log(
+  //     "Editing post with ID:",
+  //     postId,
+  //     " and updated data:",
+  //     updatedPost
+  //   );
+  //   const token = localStorage.getItem("token");
+  //   console.log(token);
+  //   const res = await fetch(`/api/blogPosts/${postId}`, {
+  //     method: "PUT",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //     },
+  //     body: JSON.stringify(updatedPost),
+  //   });
+  //   if (res.ok) {
+  //     const data = await res.json();
+  //     console.log(data);
+  //     const updatedPosts = posts.map((post) =>
+  //       post._id === data.post._id ? data.post : post
+  //     );
+  //     setPosts(updatedPosts);
+  //   } else {
+  //     alert("Unable to update post. Please try again.");
+  //   }
+  // };
 
   const handleDeletePost = async (postId) => {
     const token = localStorage.getItem("token");
