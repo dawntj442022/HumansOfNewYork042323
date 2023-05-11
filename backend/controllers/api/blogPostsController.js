@@ -109,11 +109,8 @@ const like = async (req, res) => {
 
   try {
     const blogPost = await BlogPost.findById(postId);
-    console.log("Initial Blog Post:", blogPost);
-    if (!Array.isArray(blogPost.likes) || !Array.isArray(blogPost.dislikes)) {
-      return res.status(400).json({
-        message: "Invalid data format in the database",
-      });
+    if (!blogPost) {
+      return res.status(404).json({ message: "Blog post not found" });
     }
 
     let updatedBlogPost;
@@ -125,11 +122,6 @@ const like = async (req, res) => {
         { $pull: { likes: userId } },
         { new: true } // Return the updated document
       );
-      res.status(200).json({
-        message: "Like removed",
-        likes: updatedBlogPost.likes.length,
-        dislikes: updatedBlogPost.dislikes.length,
-      });
     } else {
       // Add userId to likes and remove from dislikes if present
       updatedBlogPost = await BlogPost.findOneAndUpdate(
@@ -137,25 +129,23 @@ const like = async (req, res) => {
         { $addToSet: { likes: userId }, $pull: { dislikes: userId } },
         { new: true } // Return the updated document
       );
-      res.status(200).json({
-        message: "Post liked",
-        likes: updatedBlogPost.likes.length,
-        dislikes: updatedBlogPost.dislikes.length,
-      });
     }
-    console.log("Updated Blog Post after liking:", updatedBlogPost);
+
+    res.status(200).json({
+      ...updatedBlogPost._doc,
+      likesCount: updatedBlogPost.likes.length,
+      dislikesCount: updatedBlogPost.dislikes.length,
+    });
   } catch (err) {
     res.status(500).json({ message: "Error liking the post", error: err });
   }
 };
-
 async function dislike(req, res) {
-  const postId = req.params.id;
   const userId = res.locals.data.userId;
+  const postId = req.params.id;
 
   try {
-    let blogPost = await BlogPost.findById(postId);
-    console.log("Initial Blog Post:", blogPost);
+    const blogPost = await BlogPost.findById(postId);
     if (!blogPost) {
       return res.status(404).json({ message: "Blog post not found" });
     }
@@ -169,11 +159,6 @@ async function dislike(req, res) {
         { $pull: { dislikes: userId } },
         { new: true } // Return the updated document
       );
-      res.status(200).json({
-        message: "Dislike removed",
-        likes: updatedBlogPost.likes.length,
-        dislikes: updatedBlogPost.dislikes.length,
-      });
     } else {
       // Add userId to dislikes and remove from likes if present
       updatedBlogPost = await BlogPost.findOneAndUpdate(
@@ -181,16 +166,15 @@ async function dislike(req, res) {
         { $addToSet: { dislikes: userId }, $pull: { likes: userId } },
         { new: true } // Return the updated document
       );
-      res.status(200).json({
-        message: "Post disliked",
-        likes: updatedBlogPost.likes.length,
-        dislikes: updatedBlogPost.dislikes.length,
-      });
     }
-    console.log("Updated Blog Post after disliking:", updatedBlogPost);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+
+    res.status(200).json({
+      ...updatedBlogPost._doc,
+      likesCount: updatedBlogPost.likes.length,
+      dislikesCount: updatedBlogPost.dislikes.length,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Error disliking the post", error: err });
   }
 }
 

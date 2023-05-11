@@ -104,8 +104,8 @@ const Home = () => {
               />
               <Thumbs
                 postId={post._id}
-                initialLikes={post.likes}
-                initialDislikes={post.dislikes}
+                initialLikesCount={post.likesCount}
+                initialDislikesCount={post.dislikesCount}
               />
             </div>
           ))

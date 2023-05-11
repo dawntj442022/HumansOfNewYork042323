@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 
-const Thumbs = ({ postId, initialLikes = [], initialDisLikes = [] }) => {
+const Thumbs = ({ postId, initialLikes = 0, initialDisLikes = 0 }) => {
   console.log("Post ID value:", postId);
-  const [likes, setLikes] = useState(initialLikes);
-  const [dislikes, setDislikes] = useState(initialDisLikes);
+  const [likesCount, setLikesCount] = useState(initialLikes);
+  const [dislikesCount, setDislikesCount] = useState(initialDisLikes);
 
   const handleLikeClick = () => {
     const token = localStorage.getItem("token");
@@ -19,7 +19,7 @@ const Thumbs = ({ postId, initialLikes = [], initialDisLikes = [] }) => {
       .then((res) => res.json())
       .then((data) => {
         // Update the post's likes count
-        setLikes(data.likes);
+        setLikesCount(data.likesCount);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -40,7 +40,7 @@ const Thumbs = ({ postId, initialLikes = [], initialDisLikes = [] }) => {
       .then((res) => res.json())
       .then((data) => {
         // Update the post's dislikes count
-        setDislikes(data.dislikes);
+        setDislikesCount(data.dislikesCount);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -54,13 +54,13 @@ const Thumbs = ({ postId, initialLikes = [], initialDisLikes = [] }) => {
           👍
         </span>
       </button>
-      <span>{likes.length}</span>
+      <span>{likesCount}</span>
       <button onClick={handleDislikeClick}>
         <span role="img" aria-label="thumbs-down">
           👎
         </span>
       </button>
-      <span>{dislikes.length}</span>
+      <span>{dislikesCount}</span>
     </div>
   );
 };
