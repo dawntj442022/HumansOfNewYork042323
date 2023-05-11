@@ -41,7 +41,7 @@ const SignupPage = () => {
 
   return (
     <div className={signupPageClasses}>
-      <div className="container">
+      <div className="container signup-container">
         <h1 className="text-center mt-5">Sign Up</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">

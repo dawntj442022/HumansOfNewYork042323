@@ -3,12 +3,14 @@ import { useParams, useHistory } from "react-router-dom";
 import { useUserStore } from "../store";
 import Post from "../components/Post";
 import PostForm from "../components/PostForm";
+import videoSource from "../images/White simple photo album mobile video.mp4";
 
 const UserPage = () => {
   const [posts, setPosts] = useState([]);
   const [isCreatingPost, setIsCreatingPost] = useState(false);
   const { id } = useParams();
   const user = useUserStore((state) => state.user);
+
   const history = useHistory();
 
   console.log("User ID in user page:", user?._id);
@@ -239,7 +241,11 @@ const UserPage = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container userpage-container">
+      <video autoPlay="autoplay" loop="loop" muted className="video-background">
+        <source src={videoSource} type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <h1 className="text-center mt-5">{user.username} Blog</h1>
       {user._id === id && (
         <button onClick={() => setIsCreatingPost(true)}>Create Post</button>

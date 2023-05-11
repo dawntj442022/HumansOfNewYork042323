@@ -40,16 +40,20 @@ const Navigation = ({ user, onLogout }) => {
               </>
             ) : (
               <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/login">
-                    Login
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/signup">
-                    Sign Up
-                  </Link>
-                </li>
+                {!user && (
+                  <>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/login">
+                        Login
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link className="nav-link" to="/signup">
+                        Sign Up
+                      </Link>
+                    </li>
+                  </>
+                )}
               </>
             )}
           </ul>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Navigation from "../components/Navigation";
 import Post from "../components/Post";
 import Thumbs from "../components/Thumbs";
 import { useUserStore } from "../store";
+import Navigation from "../components/Navigation";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -26,16 +26,6 @@ const Home = () => {
     fetchPosts();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchPosts = async () => {
-  //     const res = await fetch("/api/blogPosts");
-  //     const data = await res.json();
-  //     setPosts(data);
-  //   };
-
-  //   fetchPosts();
-  // }, [user, fetchUserPosts]);
-
   const handleDelete = async (postId) => {
     const token = localStorage.getItem("token");
     console.log(token);
@@ -56,14 +46,9 @@ const Home = () => {
     }
   };
 
-  // if (!user) {
-  //   return <div>Loading...</div>;
-  // }
-
   const handleEdit = async (postId, updatedPost) => {
     const token = localStorage.getItem("token");
     console.log(token);
-    // console.log("Before fetch");
     const res = await fetch(`http://localhost:3001/api/blogPosts/${postId}`, {
       method: "PUT",
       headers: {
@@ -89,10 +74,11 @@ const Home = () => {
       alert("Unable to update post. Please try again.");
     }
   };
+
   return (
     <>
-      <Navigation user={user} onLogout={handleLogout} />
-      <div className="container">
+      {user && <Navigation user={user} onLogout={handleLogout} />}
+      <div className="container homepage-container">
         <h1 className="text-center mt-5">All Posts</h1>
         {posts.length > 0 ? (
           posts.map((post) => (
