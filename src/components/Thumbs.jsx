@@ -19,7 +19,7 @@ const Thumbs = ({ postId, initialLikes = 0, initialDisLikes = 0 }) => {
       .then((res) => res.json())
       .then((data) => {
         // Update the post's likes count
-        setLikesCount(data.likesCount);
+        setLikesCount(data.likes.length);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -40,7 +40,7 @@ const Thumbs = ({ postId, initialLikes = 0, initialDisLikes = 0 }) => {
       .then((res) => res.json())
       .then((data) => {
         // Update the post's dislikes count
-        setDislikesCount(data.dislikesCount);
+        setDislikesCount(data.dislikes.length);
       })
       .catch((error) => {
         console.error("Error:", error);
