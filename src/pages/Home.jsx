@@ -64,7 +64,7 @@ const Home = () => {
     const token = localStorage.getItem("token");
     console.log(token);
     // console.log("Before fetch");
-    const res = await fetch(`/api/blogPosts/${postId}`, {
+    const res = await fetch(`http://localhost:3001/api/blogPosts/${postId}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",

@@ -77,41 +77,113 @@ const UserPage = () => {
       alert("Unable to create post. Please try again.");
     }
   };
-  const handleEditPost = async (postId, updatedPost) => {
-    console.log(
-      "Editing post with ID:",
-      postId,
-      " and updated data:",
-      updatedPost
-    );
 
+  const handleEditPost = async (id, updatedPost) => {
+    const token = localStorage.getItem("token");
+    console.log(token);
     try {
-      const response = await fetch(
-        `http://localhost:3002/api/blogPosts/${postId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(updatedPost),
-        }
-      );
+      const res = await fetch(`http://localhost:3001/api/blogPosts/${id}`, {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(updatedPost), // <-- Send updatedPost object, not ID
+      });
 
-      if (!response.ok) {
-        console.log("Error status code:", response.status);
-        console.log("Error status text:", response.statusText);
-        const errorResponse = await response.json();
-        console.log("Server error message:", errorResponse.message);
-        throw new Error("Failed to edit the post");
+      if (!res.ok) {
+        const errorData = await res.text();
+        console.error("Error status code:", res.status);
+        console.error("Error status text:", res.statusText);
+        console.error("Error data:", errorData);
+        throw new Error("Error while editing post");
       }
 
-      const responseData = await response.json();
-      console.log("Edited post:", responseData);
+      const data = await res.json();
+      console.log("Successfully updated post:", data);
+      setPosts(data);
     } catch (error) {
-      console.log("Error while editing post:", error);
+      console.error("Error while editing post:", error);
     }
   };
+
+  // const handleEditPost = async (postId, updatedPost) => {
+  //   const token = localStorage.getItem("token");
+  //   console.log(token);
+  //   console.log(
+  //     "Editing post with ID:",
+  //     postId,
+  //     " and updated data:",
+  //     updatedPost
+  //   );
+
+  //   try {
+  //     const res = await fetch(`/api/blogPosts/${postId}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       },
+  //       body: JSON.stringify(updatedPost),
+  //     });
+
+  //     if (!res.ok) {
+  //       const errorData = await res.text(); // <-- Use .text() instead of .json() when expecting a non-JSON response
+  //       console.error("Error status code:", res.status);
+  //       console.error("Error status text:", res.statusText);
+  //       console.error("Error data:", errorData); //
+  //       console.log("Error status code:", res.status);
+  //       console.log("Error status text:", res.statusText);
+  //       const errorResponse = await res.json();
+  //       console.log("Server error message:", errorResponse.message);
+  //       throw new Error("Failed to edit the post");
+  //     }
+
+  //     const responseData = await res.json();
+  //     console.log("Edited post:", responseData);
+  //   } catch (error) {
+  //     console.log("Error while editing post:", error);
+  //   }
+  // };
+
+  // const handleEditPost = async (postId, updatedPost) => {
+  //   console.log(
+  //     "Editing post with ID:",
+  //     postId,
+  //     " and updated data:",
+  //     updatedPost
+  //   );
+
+  //   try {
+  //     const response = await fetch(
+  //       `http://localhost:3002/api/blogPosts/${postId}`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           Accept: "application/json",
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //         },
+  //         body: JSON.stringify(updatedPost),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       console.log("Error status code:", response.status);
+  //       console.log("Error status text:", response.statusText);
+  //       const errorResponse = await response.json();
+  //       console.log("Server error message:", errorResponse.message);
+  //       throw new Error("Failed to edit the post");
+  //     }
+
+  //     const responseData = await response.json();
+  //     console.log("Edited post:", responseData);
+  //   } catch (error) {
+  //     console.log("Error while editing post:", error);
+  //   }
+  // };
 
   // const handleEditPost = async (postId, updatedPost) => {
   //   console.log(
