@@ -53,42 +53,6 @@ app.post("/api/blogPosts", (req, res) => {
   console.log("New post:", newPost);
 });
 
-// app.post("/api/blogPosts/:id/like", async (req, res) => {
-//   const postId = req.params.id;
-
-//   try {
-//     const post = await blogPost.findById(postId);
-//     if (!post) {
-//       return res.status(404).json({ message: "Blog post not found" });
-//     }
-
-//     post.likes += 1;
-//     await post.save();
-//     res.json({ likes: post.likes });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
-
-// app.post("/api/blogPosts/:id/dislike", async (req, res) => {
-//   const postId = req.params.id;
-
-//   try {
-//     const post = await blogPost.findById(postId);
-//     if (!post) {
-//       return res.status(404).json({ message: "Blog post not found" });
-//     }
-
-//     post.dislikes += 1;
-//     await post.save();
-//     res.json({ dislikes: post.dislikes });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// });
-
 // Configure to use port 3001 instead of 3000 during
 // development to avoid collision with React's dev server
 const port = process.env.PORT || 3001;

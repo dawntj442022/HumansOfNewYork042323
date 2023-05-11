@@ -91,7 +91,7 @@ const UserPage = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(updatedPost), // <-- Send updatedPost object, not ID
+        body: JSON.stringify(updatedPost),
       });
 
       if (!res.ok) {
