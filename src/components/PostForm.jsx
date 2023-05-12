@@ -13,8 +13,9 @@ const PostForm = ({ post, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("submitting updated post:", { ...post, title, content });
-    onSubmit({ ...post, title, content });
+    const updatedPost = post ? { ...post, title, content } : { title, content };
+    console.log("submitting updated post:", updatedPost);
+    onSubmit(updatedPost);
     setTitle("");
     setContent("");
   };
@@ -33,7 +34,10 @@ const PostForm = ({ post, onSubmit }) => {
         Content:
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            console.log("Content:", e.target.value);
+            setContent(e.target.value);
+          }}
         ></textarea>
       </label>
       <button type="submit">Submit</button>

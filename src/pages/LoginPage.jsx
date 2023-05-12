@@ -49,7 +49,7 @@ const LoginPage = () => {
 
   return (
     <div className="container login-container">
-      <h1 className="text-center mt-5">Login</h1>
+      {/* <h1 className="text-center mt-5">Login</h1> */}
       <LoginForm
         handleSubmit={handleSubmit}
         setEmail={setEmail}

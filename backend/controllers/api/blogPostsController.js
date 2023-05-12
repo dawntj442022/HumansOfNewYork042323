@@ -50,6 +50,47 @@ const getOne = async (req, res) => {
   }
 };
 
+// const update = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { body } = req;
+//     console.log("request payload:", body);
+
+//     console.log("Updating blog post with ID:", id);
+
+//     const blogPost = await BlogPost.findById(id);
+//     if (!blogPost) {
+//       console.log("Blog post not found");
+//       res.status(404).json({ message: "Blog post not found" });
+//       return;
+//     }
+
+//     // Check if the user is the author of the blog post
+//     if (blogPost.author.toString() !== res.locals.data.userId) {
+//       res
+//         .status(403)
+//         .json({ message: "You are not authorized to update this post" });
+//       return;
+//     }
+
+//     const updatedBlogPost = await BlogPost.findByIdAndUpdate(id, body, {
+//       new: true,
+//     });
+
+//     console.log("Updated blog post:", updatedBlogPost);
+
+//     if (!updatedBlogPost) {
+//       console.log("Blog post not found after update");
+//       res.status(404).json({ message: "Blog post not found" });
+//     } else {
+//       res.status(200).json({ post: updatedBlogPost });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error });
+//   }
+// };
+
 const update = async (req, res) => {
   try {
     const { id } = req.params;
@@ -65,15 +106,19 @@ const update = async (req, res) => {
       return;
     }
 
+    // Check if the user is the author of the blog post
     if (blogPost.author.toString() !== res.locals.data.userId) {
       res
         .status(403)
         .json({ message: "You are not authorized to update this post" });
       return;
     }
-    const updatedBlogPost = await BlogPost.findByIdAndUpdate(id, body, {
-      new: true,
-    });
+
+    // Update the blog post fields
+    Object.assign(blogPost, body);
+
+    // Save the updated blog post
+    const updatedBlogPost = await blogPost.save();
 
     console.log("Updated blog post:", updatedBlogPost);
 

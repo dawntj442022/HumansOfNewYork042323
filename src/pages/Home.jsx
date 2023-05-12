@@ -10,13 +10,11 @@ const Home = () => {
   const setUser = useUserStore((state) => state.setUser);
 
   const handleLogout = () => {
-    console.log("Before logout token:", localStorage.getItem("token"));
     setUser(null);
     localStorage.removeItem("token");
   };
 
   useEffect(() => {
-    console.log("Token value:", localStorage.getItem("token"));
     const fetchPosts = async () => {
       const res = await fetch("/api/blogPosts");
       const data = await res.json();
@@ -28,7 +26,6 @@ const Home = () => {
 
   const handleDelete = async (postId) => {
     const token = localStorage.getItem("token");
-    console.log(token);
     const res = await fetch(`/api/blogPosts/${postId}`, {
       method: "DELETE",
       headers: {
@@ -38,7 +35,6 @@ const Home = () => {
       },
       body: null,
     });
-    console.log(res.status);
     if (res.ok) {
       setPosts(posts.filter((post) => post._id !== postId));
     } else {
@@ -48,28 +44,26 @@ const Home = () => {
 
   const handleEdit = async (postId, updatedPost) => {
     const token = localStorage.getItem("token");
-    console.log(token);
+    console.log("Token:", token);
     const res = await fetch(`http://localhost:3001/api/blogPosts/${postId}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
         title: updatedPost.title,
         content: updatedPost.content,
       }),
     });
-    console.log(res.status);
+
     if (res.ok) {
       const data = await res.json();
-      console.log(data);
       const updatedPosts = posts.map((post) =>
         post._id === data._id ? data : post
       );
       setPosts(updatedPosts);
-      console.log(updatedPost);
     } else {
       alert("Unable to update post. Please try again.");
     }

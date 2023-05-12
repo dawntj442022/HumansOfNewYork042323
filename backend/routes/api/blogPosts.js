@@ -22,6 +22,7 @@ router.post(
 
 // Route to update an existing blog post by ID
 router.put("/:id", checkToken, ensureLoggedIn, blogPostsController.update);
+
 // Route to delete a blog post by ID
 router.delete("/:id", checkToken, ensureLoggedIn, blogPostsController.remove);
 

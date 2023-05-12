@@ -5,7 +5,7 @@ const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+// const bodyParser = require("body-parser");
 const usersRoutes = require("./backend/routes/api/users");
 const blogPostsRoutes = require("./backend/routes/api/blogPosts"); // Import the blogPosts routes
 // const blogPost = require("./backend/models/blogPost");
@@ -18,7 +18,7 @@ var corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 app.use(logger("dev"));
 app.use(express.json());
 
@@ -48,10 +48,10 @@ app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-app.post("/api/blogPosts", (req, res) => {
-  const newPost = req.body;
-  console.log("New post:", newPost);
-});
+// app.post("/api/blogPosts", (req, res) => {
+//   const newPost = req.body;
+//   console.log("New post:", newPost);
+// });
 
 // Configure to use port 3001 instead of 3000 during
 // development to avoid collision with React's dev server
